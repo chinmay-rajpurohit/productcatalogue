@@ -40,7 +40,7 @@
 <body>
     <h1>Product Catalogue</h1>
 
-    <form action="/add-product" method="POST">
+    <form action="https://productcatalouge-afc0exdyhvb7bhgf.eastus-01.azurewebsites.net/add-product" method="POST">
         <input type="text" name="id" placeholder="Product ID" required>
         <input type="text" name="name" placeholder="Product Name" required>
         <input type="number" name="price" placeholder="Price" required>
@@ -66,8 +66,10 @@
     </table>
 
     <script>
+        const BASE_URL = 'https://productcatalouge-afc0exdyhvb7bhgf.eastus-01.azurewebsites.net';
+
         async function loadProducts() {
-            const response = await fetch('/products');
+            const response = await fetch(`${BASE_URL}/products`);
             const products = await response.json();
             const table = document.getElementById('productTable');
             table.innerHTML = products.map(p =>
@@ -82,7 +84,7 @@
 
         async function searchProducts() {
             const query = document.getElementById('searchBox').value;
-            const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+            const response = await fetch(`${BASE_URL}/search?q=${encodeURIComponent(query)}`);
             const products = await response.json();
             const table = document.getElementById('productTable');
             table.innerHTML = products.map(p =>
