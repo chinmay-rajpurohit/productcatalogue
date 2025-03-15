@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Product Catalogue</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Product Catalogue</h1>
+
+    <form action="/add-product" method="POST">
+        <input type="text" name="id" placeholder="Product ID" required>
+        <input type="text" name="name" placeholder="Product Name" required>
+        <input type="number" name="price" placeholder="Price" required>
+        <input type="text" name="description" placeholder="Description">
+        <button type="submit">Add Product</button>
+    </form>
+
+    <h2>Search Products</h2>
+    <input type="text" id="searchBox" placeholder="Search by name">
+    <button onclick="searchProducts()">Search</button>
+
+    <h2>Product List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody id="productTable"></tbody>
+    </table>
+
+    <script>
+        async function loadProducts() {
+            const response = await fetch('/products');
+            const products = await response.json();
+            const table = document.getElementById('productTable');
+            table.innerHTML = products.map(p =>
+                `<tr>
+                    <td>${p.id}</td>
+                    <td>${p.name}</td>
+                    <td>${p.price}</td>
+                    <td>${p.description}</td>
+                </tr>`
+            ).join('');
+        }
+
+        async function searchProducts() {
+            const query = document.getElementById('searchBox').value;
+            const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+            const products = await response.json();
+            const table = document.getElementById('productTable');
+            table.innerHTML = products.map(p =>
+                `<tr>
+                    <td>${p.id}</td>
+                    <td>${p.name}</td>
+                    <td>${p.price}</td>
+                    <td>${p.description}</td>
+                </tr>`
+            ).join('');
+        }
+
+        window.onload = loadProducts;
+    </script>
+</body>
+
+</html>
