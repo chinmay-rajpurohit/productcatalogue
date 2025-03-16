@@ -1,101 +1,418 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Product Catalogue</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Product Catalogue</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        :root {
+            --primary-dark: #0f3443;
+            --primary-light: #34e89e;
+            --accent: #ff7e5f;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
             padding: 0;
         }
 
-        h1 {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
             text-align: center;
-        }
-
-        form {
-            margin-bottom: 20px;
-        }
-
-        table {
+            margin-bottom: 40px;
             width: 100%;
-            border-collapse: collapse;
         }
 
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--text-light), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin: 30px 0 20px;
+            color: var(--text-light);
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .form-section {
+            flex: 1;
+            min-width: 300px;
+            max-width: 450px;
+        }
+
+        .form-container,
+        .search-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-container h2,
+        .search-container h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
             text-align: left;
         }
 
-        th {
-            background-color: #4CAF50;
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 232, 158, 0.4), inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--accent), #ff5e5f);
             color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 126, 95, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 126, 95, 0.5);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .product-section {
+            width: 100%;
+        }
+
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            width: 100%;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .product-card h3 {
+            margin: 0 0 15px;
+            color: var(--primary-light);
+            font-size: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .product-card p {
+            margin: 8px 0;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .product-card .price {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: auto;
+            padding-top: 15px;
+        }
+
+        .loader {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid var(--primary-light);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .form-section {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <h1>Product Catalogue</h1>
+    <div class="container">
+        <header>
+            <h1>Premium Product Catalogue</h1>
+        </header>
 
-    <form action="https://productcatalouge-afc0exdyhvb7bhgf.eastus-01.azurewebsites.net/add-product" method="POST">
-        <input type="text" name="id" placeholder="Product ID" required>
-        <input type="text" name="name" placeholder="Product Name" required>
-        <input type="number" name="price" placeholder="Price" required>
-        <input type="text" name="description" placeholder="Description">
-        <button type="submit">Add Product</button>
-    </form>
+        <div class="content-wrapper">
+            <div class="form-section">
+                <div class="form-container">
+                    <h2>Add New Product</h2>
+                    <form id="productForm">
+                        <div class="form-group">
+                            <label for="productId">Product ID</label>
+                            <input type="text" id="productId" name="id" placeholder="Enter unique ID" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productName">Product Name</label>
+                            <input type="text" id="productName" name="name" placeholder="Enter product name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productPrice">Price ($)</label>
+                            <input type="number" id="productPrice" name="price" placeholder="Enter price" step="0.01"
+                                min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productDescription">Description</label>
+                            <input type="text" id="productDescription" name="description"
+                                placeholder="Enter product description">
+                        </div>
+                        <button type="submit">Add Product</button>
+                    </form>
+                </div>
 
-    <h2>Search Products</h2>
-    <input type="text" id="searchBox" placeholder="Search by name">
-    <button onclick="searchProducts()">Search</button>
+                <div class="search-container">
+                    <h2>Search Products</h2>
+                    <div class="form-group">
+                        <label for="searchBox">Product Name</label>
+                        <input type="text" id="searchBox" placeholder="Search by product name">
+                    </div>
+                    <button onclick="searchProducts()">Search Products</button>
+                </div>
+            </div>
 
-    <h2>Product List</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody id="productTable"></tbody>
-    </table>
+            <div class="product-section">
+                <h2>Available Products</h2>
+                <div id="loading" class="loader"></div>
+                <div class="product-list" id="productTable"></div>
+            </div>
+        </div>
+    </div>
 
     <script>
         const BASE_URL = 'https://productcatalouge-afc0exdyhvb7bhgf.eastus-01.azurewebsites.net';
+        const loadingElement = document.getElementById('loading');
 
         async function loadProducts() {
-            const response = await fetch(`${BASE_URL}/products`);
-            const products = await response.json();
-            const table = document.getElementById('productTable');
-            table.innerHTML = products.map(p =>
-                `<tr>
-                    <td>${p.id}</td>
-                    <td>${p.name}</td>
-                    <td>${p.price}</td>
-                    <td>${p.description}</td>
-                </tr>`
-            ).join('');
+            try {
+                showLoading(true);
+                const response = await fetch(`${BASE_URL}/products`);
+                const products = await response.json();
+                displayProducts(products);
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('productTable').innerHTML = `
+                    <div class="no-results">
+                        <h3>Error loading products</h3>
+                        <p>Please try again later.</p>
+                    </div>
+                `;
+            } finally {
+                showLoading(false);
+            }
         }
 
         async function searchProducts() {
-            const query = document.getElementById('searchBox').value;
-            const response = await fetch(`${BASE_URL}/search?q=${encodeURIComponent(query)}`);
-            const products = await response.json();
+            try {
+                showLoading(true);
+                const query = document.getElementById('searchBox').value.trim();
+                if (!query) {
+                    loadProducts();
+                    return;
+                }
+
+                const response = await fetch(`${BASE_URL}/search?q=${encodeURIComponent(query)}`);
+                const products = await response.json();
+                displayProducts(products);
+            } catch (error) {
+                console.error('Error searching products:', error);
+                document.getElementById('productTable').innerHTML = `
+                    <div class="no-results">
+                        <h3>Error searching products</h3>
+                        <p>Please try again later.</p>
+                    </div>
+                `;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayProducts(products) {
             const table = document.getElementById('productTable');
+
+            if (products.length === 0) {
+                table.innerHTML = `
+                    <div class="no-results">
+                        <h3>No products found</h3>
+                        <p>Try a different search term or add new products.</p>
+                    </div>
+                `;
+                return;
+            }
+
             table.innerHTML = products.map(p =>
-                `<tr>
-                    <td>${p.id}</td>
-                    <td>${p.name}</td>
-                    <td>${p.price}</td>
-                    <td>${p.description}</td>
-                </tr>`
+                `<div class="product-card">
+                    <h3>${escapeHtml(p.name)}</h3>
+                    <p><strong>ID:</strong> ${escapeHtml(p.id)}</p>
+                    <p>${escapeHtml(p.description || 'No description available')}</p>
+                    <p class="price">$${parseFloat(p.price).toFixed(2)}</p>
+                </div>`
             ).join('');
         }
+
+        function showLoading(show) {
+            loadingElement.style.display = show ? 'block' : 'none';
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.toString()
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        document.getElementById('productForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                showLoading(true);
+                const response = await fetch(`${BASE_URL}/add-product`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to add product');
+                }
+
+                // Reset form and reload products
+                this.reset();
+                loadProducts();
+
+            } catch (error) {
+                console.error('Error adding product:', error);
+                alert('Failed to add product. Please try again.');
+            } finally {
+                showLoading(false);
+            }
+        });
 
         window.onload = loadProducts;
     </script>
