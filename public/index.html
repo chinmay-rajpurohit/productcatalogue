@@ -50,7 +50,10 @@
             margin-bottom: 10px;
             background: linear-gradient(90deg, var(--text-light), var(--primary-light));
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
+            color: transparent;
+            /* Fallback for browsers that don't support -webkit-text-fill-color */
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             letter-spacing: 1px;
         }
@@ -243,6 +246,66 @@
                 font-size: 2.5rem;
             }
         }
+
+        .card-actions {
+            display: flex;
+            margin-top: 15px;
+            gap: 10px;
+        }
+
+        .delete-btn {
+            background: linear-gradient(90deg, #ff4444, #ff0000);
+            box-shadow: 0 4px 10px rgba(255, 68, 68, 0.4);
+        }
+
+        .delete-btn:hover {
+            box-shadow: 0 6px 15px rgba(255, 68, 68, 0.5);
+        }
+
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--primary-dark), #1a4a5a);
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: var(--text-light);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            gap: 15px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+        }
+
+        .cancel-btn {
+            background: linear-gradient(90deg, #666666, #888888);
+            box-shadow: 0 4px 10px rgba(100, 100, 100, 0.4);
+        }
     </style>
 </head>
 
@@ -297,9 +360,25 @@
         </div>
     </div>
 
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="confirm-modal">
+        <div class="modal-content">
+            <h3>Confirm Deletion</h3>
+            <p>Are you sure you want to delete this product?</p>
+            <div class="modal-actions">
+                <button id="cancelDelete" class="cancel-btn">Cancel</button>
+                <button id="confirmDelete" class="delete-btn">Delete</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const BASE_URL = 'https://productcatalouge-afc0exdyhvb7bhgf.eastus-01.azurewebsites.net';
         const loadingElement = document.getElementById('loading');
+        const confirmModal = document.getElementById('confirmModal');
+        const cancelDeleteBtn = document.getElementById('cancelDelete');
+        const confirmDeleteBtn = document.getElementById('confirmDelete');
+        let productToDelete = null;
 
         async function loadProducts() {
             try {
@@ -350,21 +429,24 @@
 
             if (products.length === 0) {
                 table.innerHTML = `
-                    <div class="no-results">
-                        <h3>No products found</h3>
-                        <p>Try a different search term or add new products.</p>
-                    </div>
-                `;
+            <div class="no-results">
+                <h3>No products found</h3>
+                <p>Try a different search term or add new products.</p>
+            </div>
+        `;
                 return;
             }
 
             table.innerHTML = products.map(p =>
                 `<div class="product-card">
-                    <h3>${escapeHtml(p.name)}</h3>
-                    <p><strong>ID:</strong> ${escapeHtml(p.id)}</p>
-                    <p>${escapeHtml(p.description || 'No description available')}</p>
-                    <p class="price">$${parseFloat(p.price).toFixed(2)}</p>
-                </div>`
+            <h3>${escapeHtml(p.name)}</h3>
+            <p><strong>ID:</strong> ${escapeHtml(p.id)}</p>
+            <p>${escapeHtml(p.description || 'No description available')}</p>
+            <p class="price">$${parseFloat(p.price).toFixed(2)}</p>
+            <div class="card-actions">
+                <button class="delete-btn" onclick="showDeleteConfirmation('${escapeHtml(p.id)}')">Delete Product</button>
+            </div>
+        </div>`
             ).join('');
         }
 
@@ -413,6 +495,50 @@
                 showLoading(false);
             }
         });
+
+        function showDeleteConfirmation(productId) {
+            productToDelete = productId;
+            confirmModal.style.display = 'flex';
+        }
+
+        function hideDeleteConfirmation() {
+            confirmModal.style.display = 'none';
+            productToDelete = null;
+        }
+
+        async function deleteProduct() {
+            if (!productToDelete) return;
+
+            try {
+                const response = await fetch(`${BASE_URL}/delete-product`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: productToDelete })
+                });
+
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.message || 'Failed to delete product');
+                }
+
+                alert('Product deleted successfully!');
+                loadProducts(); // Refresh product list after deletion
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                alert(`Error: ${error.message}`);
+            } finally {
+                hideDeleteConfirmation();
+                showLoading(false);
+            }
+        }
+
+
+
+
+
+        // Modal event listeners
+        cancelDeleteBtn.addEventListener('click', hideDeleteConfirmation);
+        confirmDeleteBtn.addEventListener('click', deleteProduct);
 
         window.onload = loadProducts;
     </script>

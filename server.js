@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 // Cosmos DB Configuration
 const endpoint = process.env.COSMOS_DB_ENDPOINT;
 const key = process.env.COSMOS_DB_KEY;
-const databaseId = 'ProducDB'; // Correct this if needed
+const databaseId = 'ProducDB';
 const containerId = 'Products';
 
 if (!endpoint || !key) {
@@ -51,6 +51,25 @@ app.post('/add-product', async (req, res) => {
         res.status(500).send(`Error adding product: ${error.message}`);
     }
 });
+
+app.post('/delete-product', async (req, res) => {
+    const { id } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ success: false, message: 'Product ID is required for deletion.' });
+    }
+
+    try {
+        await container.item(id, id).delete();
+        res.status(200).json({ success: true, message: 'Product deleted successfully.' });
+    } catch (error) {
+        console.error(`Error deleting product: ${error.message}`);
+        res.status(500).json({ success: false, message: `Error deleting product: ${error.message}` });
+    }
+});
+
+
+
 
 // List all products
 app.get('/products', async (req, res) => {
